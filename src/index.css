@@ -1,0 +1,107 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  body {
+    @apply bg-gradient-to-br from-purple-400 to-indigo-600 min-h-screen;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .image-color-analyzer {
+    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 bg-white bg-opacity-90 rounded-xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
+  }
+
+  .title {
+    @apply text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center text-indigo-800;
+  }
+
+  .upload-area {
+    @apply border-2 border-dashed border-indigo-300 rounded-lg p-4 sm:p-6 md:p-8 text-center cursor-pointer transition-all duration-300 hover:border-indigo-500 hover:bg-indigo-50;
+  }
+
+  .upload-label {
+    @apply flex flex-col items-center;
+  }
+
+  .upload-icon {
+    @apply mb-2 sm:mb-4 text-4xl sm:text-5xl text-indigo-500;
+  }
+
+  .uploaded-image {
+    @apply mx-auto max-w-full h-auto object-contain my-3 sm:my-5 rounded-2xl;
+  }
+  .color-palette {
+    @apply flex justify-center gap-4 mt-6;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 640px) {
+    .color-palette {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  .color-swatch {
+    @apply w-1/6 aspect-square rounded-lg cursor-pointer transition-all duration-0;
+  }
+
+  .color-swatch:hover {
+    @apply transform scale-105;
+  }
+  
+  .color-swatch:active {
+    @apply transform scale-95;
+  }
+  
+  .color-hex {
+    @apply bg-black bg-opacity-50 px-2 py-1 rounded text-xs sm:text-sm;
+  }
+}
+
+.dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.mode-switch {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.switch-track {
+  width: 50px;
+  height: 24px;
+  background-color: #D1D5DB;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.switch-thumb {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moon-icon {
+  font-size: 12px;
+}
+
+.dark-mode {
+  background-color: #1F2937;
+  color: #F3F4F6;
+}
+
+.dark-mode .upload-area {
+  background-color: #374151;
+  border-color: #4B5563;
+}
