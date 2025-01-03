@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 const ImageColorAnalyzer = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [colorPalette, setColorPalette] = useState([]);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleImageUpload = useCallback((event) => {
     const file = event.target.files[0];
@@ -37,10 +36,6 @@ const ImageColorAnalyzer = () => {
     }
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
   const copyToClipboard = (color) => {
     navigator.clipboard
       .writeText(color)
@@ -60,26 +55,8 @@ const ImageColorAnalyzer = () => {
   };
 
   return (
-    <div className={`image-color-analyzer ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className="image-color-analyzer">
       <h1 className="title">Color Extractor</h1>
-      <div className="dark-mode-toggle">
-        <button onClick={toggleDarkMode} className="mode-switch">
-          <motion.div
-            className="switch-track"
-            animate={{ backgroundColor: isDarkMode ? "#4B5563" : "#D1D5DB" }}
-          >
-            <motion.div
-              className="switch-thumb"
-              animate={{
-                x: isDarkMode ? 22 : 2,
-                backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF",
-              }}
-            >
-              <span className="mode-icon">{isDarkMode ? '🌙' : '☀️'}</span>
-            </motion.div>
-          </motion.div>
-        </button>
-      </div>
       <motion.div
         className="upload-area"
         whileHover={{ scale: 1.02 }}
