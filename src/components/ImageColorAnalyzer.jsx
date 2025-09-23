@@ -359,13 +359,13 @@ const ImageColorAnalyzer = () => {
   const extractWithVibrant = async (imageSrc) => {
     return new Promise((resolve) => {
       Vibrant.from(imageSrc)
-        .quality(1)
+          .quality(1)
         .maxColorCount(24) // Increased for more color options
-        .getPalette((err, palette) => {
-          if (palette) {
-            let extractedColors = Object.entries(palette)
-              .filter(([_, swatch]) => swatch)
-              .sort((a, b) => b[1].population - a[1].population)
+          .getPalette((err, palette) => {
+            if (palette) {
+              let extractedColors = Object.entries(palette)
+                .filter(([_, swatch]) => swatch)
+                .sort((a, b) => b[1].population - a[1].population)
               .map(([_, swatch]) => swatch.getHex())
               .filter(color => isValidColor(color)); // Filter out invalid colors
             
@@ -936,9 +936,9 @@ const ImageColorAnalyzer = () => {
               break;
             default:
               extractedColors = await extractWithVibrant(processedImage);
-          }
-          
-          setColorPalette(extractedColors);
+              }
+
+              setColorPalette(extractedColors);
           
           // Save to color history
           const historyEntry = {
@@ -1025,7 +1025,7 @@ const ImageColorAnalyzer = () => {
         background: "#333",
         color: "#fff",
       },
-    });
+      });
   };
 
   return (
@@ -1176,18 +1176,18 @@ const ImageColorAnalyzer = () => {
               </button>
             </div>
           </div>
-          <div className="color-palette">
-            {colorPalette.map((color, index) => (
-              <motion.div
-                key={index}
+        <div className="color-palette">
+          {colorPalette.map((color, index) => (
+            <motion.div
+              key={index}
                 className="color-swatch-container"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <div
-                  className="color-swatch"
-                  style={{ backgroundColor: color }}
-                  onClick={() => copyToClipboard(color)}
+              className="color-swatch"
+              style={{ backgroundColor: color }}
+              onClick={() => copyToClipboard(color)}
                 ></div>
                 {showHexCodes && (
                   <div className="color-code">
