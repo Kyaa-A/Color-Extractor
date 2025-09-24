@@ -3,23 +3,108 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design System Color Tokens */
+:root {
+  /* Base Palette - Professional Purple Theme */
+  --color-primary: #4f46e5;
+  --color-accent: #7c3aed;
+  --color-secondary: #6366f1;
+  --color-main-bg: #f8fafc;
+  
+  /* Semantic Colors */
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-accent: #4f46e5;
+  
+  /* Interactive States */
+  --color-button-bg: #4f46e5;
+  --color-button-text: #ffffff;
+  --color-button-hover: #4338ca;
+  --color-button-focus: #3730a3;
+  
+  /* Borders & Dividers */
+  --color-border-light: #e2e8f0;
+  --color-border-medium: #cbd5e1;
+  --color-border-muted: #f1f5f9;
+  
+  /* Background Variants */
+  --color-bg-main: #f8fafc;
+  --color-bg-section: #f1f5f9;
+  --color-bg-card: #ffffff;
+  --color-bg-overlay: rgba(79, 70, 229, 0.1);
+}
+
 @layer components {
   body {
-    @apply bg-gradient-to-br from-purple-400 to-indigo-600 min-h-screen;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     font-family: "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+    color: var(--color-text-primary);
+    min-height: 100vh;
+  }
+
+  /* Color System Utility Classes */
+  .bg-main { background-color: var(--color-bg-main); }
+  .bg-section { background-color: var(--color-bg-section); }
+  .bg-card { background-color: var(--color-bg-card); }
+  
+  .text-primary { color: var(--color-text-primary); }
+  .text-secondary { color: var(--color-text-secondary); }
+  .text-muted { color: var(--color-text-muted); }
+  .text-accent { color: var(--color-text-accent); }
+  
+  .border-light { border-color: var(--color-border-light); }
+  .border-medium { border-color: var(--color-border-medium); }
+  .border-muted { border-color: var(--color-border-muted); }
+  
+  /* Button System */
+  .btn-primary {
+    background-color: var(--color-button-bg);
+    color: var(--color-button-text);
+    border: 1px solid var(--color-border-light);
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-button-hover);
+    transform: translateY(-1px);
+  }
+  
+  .btn-primary:focus {
+    background-color: var(--color-button-focus);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-medium);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-bg-section);
   }
 
   .image-color-analyzer {
-    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 bg-white bg-opacity-90 rounded-xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
+    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   .title {
-    @apply text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center text-indigo-800;
+    @apply text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center;
     font-family: "Roboto Slab", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    color: var(--color-text-primary);
   }
 
   .controls-panel {
-    @apply mb-4 sm:mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200 space-y-4;
+    @apply mb-4 sm:mb-6 p-6 rounded-xl space-y-4;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .control-group {
@@ -27,11 +112,22 @@
   }
 
   .control-label {
-    @apply block text-sm font-medium text-indigo-700;
+    @apply block text-sm font-medium;
+    color: var(--color-text-primary);
   }
 
   .control-select {
-    @apply w-full p-2 border border-indigo-300 rounded-md bg-white text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+    @apply w-full p-3 rounded-lg focus:outline-none transition-all duration-200;
+    background-color: var(--color-bg-card);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border-light);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .control-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-bg-overlay), 0 4px 8px rgba(79, 70, 229, 0.15);
+    transform: translateY(-1px);
   }
 
   .checkbox-group {
@@ -39,11 +135,13 @@
   }
 
   .checkbox-label {
-    @apply flex items-center text-sm text-indigo-700 cursor-pointer;
+    @apply flex items-center text-sm cursor-pointer;
+    color: var(--color-text-primary);
   }
 
   .checkbox-label input[type="checkbox"] {
-    @apply w-4 h-4 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500 mr-3;
+    @apply w-4 h-4 rounded mr-3;
+    accent-color: var(--color-accent);
   }
 
   .color-palette-container {
@@ -55,7 +153,8 @@
   }
 
   .palette-title {
-    @apply text-lg font-semibold text-indigo-800;
+    @apply text-lg font-semibold;
+    color: var(--color-text-primary);
   }
 
   .palette-actions {
@@ -63,15 +162,28 @@
   }
 
   .export-btn, .copy-all-btn {
-    @apply px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 transition-colors duration-200;
+    @apply px-4 py-2 text-sm rounded-lg transition-all duration-200 font-medium;
+    background: linear-gradient(135deg, var(--color-button-bg) 0%, var(--color-accent) 100%);
+    color: var(--color-button-text);
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+  }
+
+  .export-btn:hover, .copy-all-btn:hover {
+    background: linear-gradient(135deg, var(--color-button-hover) 0%, #6d28d9 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
   }
 
   .color-analysis {
-    @apply mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200;
+    @apply mt-6 p-6 rounded-xl;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .analysis-title {
-    @apply text-base font-semibold text-indigo-800 mb-3;
+    @apply text-base font-semibold mb-3;
+    color: var(--color-text-primary);
   }
 
   .analysis-content {
@@ -83,15 +195,19 @@
   }
 
   .analysis-label {
-    @apply text-sm font-medium text-indigo-700;
+    @apply text-sm font-medium;
+    color: var(--color-text-primary);
   }
 
   .analysis-color {
-    @apply px-2 py-1 rounded text-xs font-mono text-white shadow-sm;
+    @apply px-2 py-1 rounded text-xs font-mono shadow-sm;
+    background-color: var(--color-text-primary);
+    color: var(--color-bg-card);
   }
 
   .analysis-value {
-    @apply text-sm text-indigo-600 font-medium;
+    @apply text-sm font-medium;
+    color: var(--color-text-muted);
   }
 
   .color-swatch-container {
@@ -103,7 +219,17 @@
   }
 
   .upload-area {
-    @apply border-2 border-dashed border-indigo-300 rounded-lg p-4 sm:p-6 md:p-8 text-center cursor-pointer transition-all duration-300 hover:border-indigo-500 hover:bg-indigo-50;
+    @apply border-2 border-dashed rounded-xl p-6 sm:p-8 md:p-12 text-center cursor-pointer transition-all duration-300;
+    border-color: var(--color-border-medium);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .upload-area:hover {
+    border-color: var(--color-accent);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
   }
 
   .upload-label {
@@ -111,7 +237,9 @@
   }
 
   .upload-icon {
-    @apply mb-2 sm:mb-4 text-4xl sm:text-5xl text-indigo-500;
+    @apply mb-2 sm:mb-4 text-4xl sm:text-5xl;
+    color: var(--color-accent);
+    filter: drop-shadow(0 4px 8px rgba(79, 70, 229, 0.2));
   }
 
   .uploaded-image {
