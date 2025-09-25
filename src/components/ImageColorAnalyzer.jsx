@@ -1155,7 +1155,19 @@ const ImageColorAnalyzer = () => {
       </div>
 
     <div className="image-color-analyzer">
-      <h1 className="title">Color Extractor</h1>
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="title mb-0">Color Extractor</h1>
+        {!showControls && (
+          <button
+            onClick={() => { setShowControls(true); setSelectedImage(null); setColorPalette([]); setColorAnalysis(null); }}
+            className="inline-flex items-center gap-2 text-xs sm:text-sm bg-indigo-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-indigo-500 transition-colors duration-200"
+            title="Extract another image"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12,4V1L8,5L12,9V6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12H4A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z"/></svg>
+            Extract Again
+          </button>
+        )}
+      </div>
       
       {/* Controls Panel - Only show when showControls is true */}
       {showControls && (
@@ -1251,27 +1263,7 @@ const ImageColorAnalyzer = () => {
         </div>
       )}
 
-      {/* Extract Again Button - Show when controls are hidden */}
-      {!showControls && (
-        <div className="flex justify-between items-center mb-4">
-          <div></div>
-          <button
-            onClick={() => {
-              setShowControls(true);
-              setSelectedImage(null);
-              setColorPalette([]);
-              setColorAnalysis(null);
-            }}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-500 transition-colors duration-200 flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12,4V1L8,5L12,9V6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12H4A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z" />
-            </svg>
-            Extract Again
-          </button>
-          <div></div>
-        </div>
-      )}
+      {/* (removed center Extract Again; now in header) */}
 
       {!selectedImage && (
       <motion.div
