@@ -93,11 +93,43 @@
   }
 
   .image-color-analyzer {
-    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
+    @apply w-full max-w-xl mx-auto p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl mt-3 sm:mt-6 md:mt-10;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Mobile: remove the white card container so content sits on the page bg */
+  @media (max-width: 640px) {
+    .color-extractor-page {
+      padding-top: 3.5rem; /* space for fixed back button */
+    }
+    .image-color-analyzer {
+      @apply max-w-full p-4 mt-0 rounded-none shadow-none;
+      background: transparent;
+      backdrop-filter: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    .controls-panel,
+    .color-palette-container,
+    .color-analysis {
+      @apply rounded-lg;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: none;
+    }
+
+    .image-color-analyzer .title {
+      @apply mb-3;
+      color: #ffffff;
+    }
+
+    .upload-area {
+      @apply p-4;
+    }
   }
 
   .title {
@@ -123,7 +155,7 @@
   }
 
   .control-select {
-    @apply w-full p-3 rounded-lg focus:outline-none transition-all duration-200;
+    @apply w-full p-3 rounded-lg focus:outline-none transition-all duration-200 text-sm sm:text-base;
     background-color: var(--color-bg-card);
     color: var(--color-text-primary);
     border: 2px solid var(--color-border-light);
@@ -167,7 +199,7 @@
   }
 
   .palette-actions {
-    @apply flex gap-2;
+    @apply flex gap-2 flex-wrap;
   }
 
   .export-btn, .copy-all-btn {
@@ -228,7 +260,7 @@
   }
 
   .upload-area {
-    @apply border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-300;
+    @apply border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-300;
     border-color: var(--color-border-medium);
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -253,9 +285,10 @@
 
   .uploaded-image {
     @apply mx-auto max-w-full h-auto object-contain my-3 sm:my-5 rounded-2xl;
+    max-height: 50vh;
   }
   .color-palette {
-    @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 justify-items-center;
+    @apply grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 justify-items-center;
     max-width: 100%;
   }
   

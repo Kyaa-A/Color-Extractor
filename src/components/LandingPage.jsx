@@ -32,9 +32,22 @@ const LandingPage = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl font-bold text-white"
+              className="flex items-center"
             >
-              Color Extractor
+              <Link to="/" aria-label="Home" className="inline-flex items-center gap-3">
+                {/* Icon mark - mobile & desktop */}
+                <img
+                  src="/TINTA_logo.webp"
+                  alt="TINTA icon"
+                  className="block md:hidden h-9 sm:h-10 w-auto"
+                />
+                {/* Wordmark - desktop only for combo */}
+                <img
+                  src="/TINTA_darkmode.webp"
+                  alt="TINTA"
+                  className="hidden md:block h-8 lg:h-9 w-auto"
+                />
+              </Link>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -66,6 +79,11 @@ const LandingPage = () => {
                 Extract Colors from
                 <span className="block text-indigo-300">Any Image</span>
               </h1>
+              <div className="mb-6">
+                <span className="inline-block bg-white/10 text-indigo-100 px-3 py-1 rounded-full text-xs sm:text-sm tracking-wide">
+                  TINTA — Tools for Inspiring New Tones & Art
+                </span>
+              </div>
               <p className="text-xl mb-8 text-gray-100 leading-relaxed">
                 Professional color extraction tool with advanced algorithms. 
                 Get accurate color palettes, analyze color relationships, 
