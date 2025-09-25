@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import * as Vibrant from "node-vibrant";
 import { FastAverageColor } from "fast-average-color";
 import toast from "react-hot-toast";
@@ -7,8 +8,12 @@ import toast from "react-hot-toast";
 const ImageColorAnalyzer = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [colorPalette, setColorPalette] = useState([]);
+  const [colorAnalysis, setColorAnalysis] = useState(null);
   const [extractionMethod, setExtractionMethod] = useState('vibrant');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showControls, setShowControls] = useState(true);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [colorFormat, setColorFormat] = useState('hex');
   const [showHexCodes, setShowHexCodes] = useState(true);
   const [preprocessingOptions, setPreprocessingOptions] = useState({
@@ -357,11 +362,16 @@ const ImageColorAnalyzer = () => {
 
   // Enhanced Vibrant extraction with advanced settings
   const extractWithVibrant = async (imageSrc) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       Vibrant.from(imageSrc)
           .quality(1)
         .maxColorCount(24) // Increased for more color options
           .getPalette((err, palette) => {
+            if (err) {
+              console.error('Vibrant error:', err);
+              reject(err);
+              return;
+            }
             if (palette) {
               let extractedColors = Object.entries(palette)
                 .filter(([_, swatch]) => swatch)
@@ -385,9 +395,42 @@ const ImageColorAnalyzer = () => {
             const uniquePalette = ensureUniquePalette(extractedColors, 6);
             resolve(uniquePalette);
           } else {
+            console.warn('No palette returned from Vibrant');
             resolve([]);
           }
         });
+    });
+  };
+
+  // Simple fallback color extraction
+  const extractSimpleColors = async (imageSrc) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 100;
+        canvas.height = 100;
+        ctx.drawImage(img, 0, 0, 100, 100);
+        
+        const imageData = ctx.getImageData(0, 0, 100, 100);
+        const pixels = imageData.data;
+        const colors = [];
+        
+        // Sample colors from the image
+        for (let i = 0; i < pixels.length; i += 16) {
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+          const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+          colors.push(hex);
+        }
+        
+        // Get unique colors and limit to 6
+        const uniqueColors = [...new Set(colors)].slice(0, 6);
+        resolve(uniqueColors);
+      };
+      img.src = imageSrc;
     });
   };
 
@@ -396,6 +439,10 @@ const ImageColorAnalyzer = () => {
     try {
       const fac = new FastAverageColor();
       const color = await fac.getColorAsync(imageSrc);
+      if (!color || !color.hex) {
+        console.warn('No color returned from Fast Average Color');
+        return [];
+      }
       const uniquePalette = ensureUniquePalette([color.hex], 6);
       return uniquePalette;
     } catch (error) {
@@ -901,44 +948,78 @@ const ImageColorAnalyzer = () => {
   const handleImageUpload = useCallback(async (event) => {
     const file = event.target.files[0];
     if (file && file.type.substr(0, 5) === "image") {
+      await processImageFile(file);
+    }
+  }, [extractionMethod, preprocessingOptions, colorHistory]);
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const processImageFile = useCallback(async (file) => {
+    if (file && file.type.substr(0, 5) === "image") {
       setIsProcessing(true);
       const reader = new FileReader();
       reader.onload = async (e) => {
         setSelectedImage(e.target.result);
         
         try {
+          console.log('Starting image processing...');
+          
           // Preprocess image if options are enabled
           const processedImage = await preprocessImage(e.target.result);
+          console.log('Image preprocessed successfully');
           
+          // Extract colors based on selected method
           let extractedColors = [];
+          console.log('Extracting colors with method:', extractionMethod);
           
-          switch (extractionMethod) {
-            case 'vibrant':
-              extractedColors = await extractWithVibrant(processedImage);
-              break;
-            case 'fast-average':
-              extractedColors = await extractWithFastAverage(processedImage);
-              break;
-            case 'kmeans':
-              extractedColors = await extractWithKMeans(processedImage);
-              break;
-            case 'median-cut':
-              extractedColors = await extractWithMedianCut(processedImage);
-              break;
-            case 'octree':
-              extractedColors = await extractWithOctree(processedImage);
-              break;
-            case 'weighted-kmeans':
-              extractedColors = await extractWithWeightedKMeans(processedImage);
-              break;
-            case 'combined':
-              extractedColors = await extractWithCombined(processedImage);
-              break;
-            default:
-              extractedColors = await extractWithVibrant(processedImage);
-              }
+          try {
+            switch (extractionMethod) {
+              case 'vibrant':
+                extractedColors = await extractWithVibrant(processedImage);
+                break;
+              case 'fast-average':
+                extractedColors = await extractWithFastAverage(processedImage);
+                break;
+              case 'kmeans':
+                extractedColors = await extractWithKMeans(processedImage);
+                break;
+              case 'median-cut':
+                extractedColors = await extractWithMedianCut(processedImage);
+                break;
+              case 'octree':
+                extractedColors = await extractWithOctree(processedImage);
+                break;
+              case 'weighted-kmeans':
+                extractedColors = await extractWithWeightedKMeans(processedImage);
+                break;
+              case 'combined':
+                extractedColors = await extractWithCombined(processedImage);
+                break;
+              default:
+                extractedColors = await extractWithVibrant(processedImage);
+                }
+          } catch (extractionError) {
+            console.error('Extraction method failed, trying fallback:', extractionError);
+            // Fallback to simple color extraction
+            extractedColors = await extractSimpleColors(processedImage);
+          }
+              
+          console.log('Colors extracted:', extractedColors);
 
               setColorPalette(extractedColors);
+          
+          // Hide controls after successful extraction
+          setShowControls(false);
           
           // Save to color history
           const historyEntry = {
@@ -946,20 +1027,53 @@ const ImageColorAnalyzer = () => {
             colors: extractedColors,
             method: extractionMethod,
             timestamp: new Date().toLocaleString(),
-            image: e.target.result
           };
-          setColorHistory(prev => [historyEntry, ...prev.slice(0, 9)]); // Keep last 10
-          
+          setColorHistory(prev => [historyEntry, ...prev.slice(0, 9)]);
+
+          // Analyze colors
+          const analysis = analyzeColorPalette(extractedColors);
+          setColorAnalysis(analysis);
+
+          toast.success(`Successfully extracted ${extractedColors.length} colors!`, {
+            icon: "🎨",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
         } catch (error) {
-          console.error('Color extraction failed:', error);
-          toast.error('Color extraction failed. Please try again.');
+          console.error('Error processing image:', error);
+          toast.error('Failed to process image. Please try again.', {
+            icon: "❌",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
         } finally {
           setIsProcessing(false);
         }
       };
       reader.readAsDataURL(file);
     }
-  }, [extractionMethod, preprocessingOptions]);
+  }, [extractionMethod, preprocessingOptions, colorHistory]);
+
+  const handleDrop = useCallback(async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.substr(0, 5) === "image") {
+        await processImageFile(file);
+      }
+    }
+  }, [processImageFile]);
+
 
   const copyToClipboard = (color) => {
     const formattedColor = formatColor(color, colorFormat);
@@ -1029,11 +1143,23 @@ const ImageColorAnalyzer = () => {
   };
 
   return (
+    <div className="color-extractor-page">
+      {/* Back to Home Button - Top Left */}
+      <div className="fixed top-4 left-4 z-50">
+        <Link 
+          to="/" 
+          className="bg-white/20 backdrop-blur-md text-white hover:text-indigo-300 font-medium flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-white/30"
+        >
+          ← Back to Home
+        </Link>
+      </div>
+
     <div className="image-color-analyzer">
       <h1 className="title">Color Extractor</h1>
       
-      {/* Controls Panel */}
-      <div className="controls-panel">
+      {/* Controls Panel - Only show when showControls is true */}
+      {showControls && (
+        <div className="controls-panel">
         {/* Extraction Method Selector */}
         <div className="control-group">
           <label htmlFor="extractionMethod" className="control-label">
@@ -1122,12 +1248,39 @@ const ImageColorAnalyzer = () => {
             Show color analysis
           </label>
         </div>
-      </div>
+        </div>
+      )}
 
+      {/* Extract Again Button - Show when controls are hidden */}
+      {!showControls && (
+        <div className="flex justify-between items-center mb-4">
+          <div></div>
+          <button
+            onClick={() => {
+              setShowControls(true);
+              setSelectedImage(null);
+              setColorPalette([]);
+              setColorAnalysis(null);
+            }}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-500 transition-colors duration-200 flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12,4V1L8,5L12,9V6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12H4A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z" />
+            </svg>
+            Extract Again
+          </button>
+          <div></div>
+        </div>
+      )}
+
+      {!selectedImage && (
       <motion.div
-        className="upload-area"
+          className={`upload-area ${isDragOver ? 'border-indigo-500 bg-indigo-50' : ''}`}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
       >
         <input
           type="file"
@@ -1136,15 +1289,26 @@ const ImageColorAnalyzer = () => {
           className="hidden"
           id="imageUpload"
           disabled={isProcessing}
+          aria-label="Upload image for color extraction"
+          aria-describedby="file-help"
         />
         <label htmlFor="imageUpload" className="upload-label">
           <div className="upload-icon">
             {isProcessing ? "⏳" : "🎨"}
           </div>
-          <p>{isProcessing ? "Processing colors..." : "Drop your image here or click to browse"}</p>
-          <p className="file-types">Supports JPG, PNG, SVG</p>
+            <p>{isProcessing ? "Processing colors..." : isDragOver ? "Drop your image here!" : "Drop your image here or click to browse"}</p>
+          <p className="file-types" id="file-help">Supports JPG, PNG, SVG</p>
+          {isProcessing && (
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+              <div 
+                className="bg-indigo-600 h-2 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${loadingProgress}%` }}
+              ></div>
+            </div>
+          )}
         </label>
       </motion.div>
+      )}
       {selectedImage && (
         <motion.img
           src={selectedImage}
@@ -1155,7 +1319,7 @@ const ImageColorAnalyzer = () => {
           transition={{ duration: 0.5 }}
         />
       )}
-      {colorPalette.length > 0 && (
+      {colorPalette.length > 0 ? (
         <div className="color-palette-container">
           <div className="palette-header">
             <h3 className="palette-title">Extracted Colors</h3>
@@ -1165,14 +1329,20 @@ const ImageColorAnalyzer = () => {
                 onClick={() => exportPalette()}
                 title="Export palette"
               >
-                📥 Export
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                Export
               </button>
               <button
                 className="copy-all-btn"
                 onClick={() => copyAllColors()}
                 title="Copy all colors"
               >
-                📋 Copy All
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" />
+                </svg>
+                Copy All
               </button>
             </div>
           </div>
@@ -1195,8 +1365,8 @@ const ImageColorAnalyzer = () => {
                   </div>
                 )}
               </motion.div>
-            ))}
-          </div>
+          ))}
+        </div>
           
           {showColorAnalysis && (
             <div className="color-analysis">
@@ -1234,7 +1404,29 @@ const ImageColorAnalyzer = () => {
             </div>
           )}
         </div>
+      ) : selectedImage && !isProcessing && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-12"
+        >
+          <div className="text-6xl mb-4">🎨</div>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">No Colors Found</h3>
+          <p className="text-gray-500 mb-4">Try a different image or extraction method</p>
+          <button
+            onClick={() => {
+              setSelectedImage(null);
+              setColorPalette([]);
+              setColorAnalysis(null);
+              setShowControls(true);
+            }}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500 transition-colors"
+          >
+            Try Another Image
+          </button>
+        </motion.div>
       )}
+      </div>
     </div>
   );
 };

@@ -43,6 +43,12 @@
     min-height: 100vh;
   }
 
+  /* Color Extractor specific background */
+  .color-extractor-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+  }
+
   /* Color System Utility Classes */
   .bg-main { background-color: var(--color-bg-main); }
   .bg-section { background-color: var(--color-bg-section); }
@@ -87,7 +93,7 @@
   }
 
   .image-color-analyzer {
-    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
+    @apply w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl mt-4 sm:mt-6 md:mt-10;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -101,7 +107,7 @@
   }
 
   .controls-panel {
-    @apply mb-4 sm:mb-6 p-6 rounded-xl space-y-4;
+    @apply mb-6 p-6 rounded-xl space-y-4;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border: 1px solid rgba(79, 70, 229, 0.1);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -145,7 +151,10 @@
   }
 
   .color-palette-container {
-    @apply mt-6;
+    @apply mt-6 p-6 rounded-xl;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .palette-header {
@@ -162,7 +171,7 @@
   }
 
   .export-btn, .copy-all-btn {
-    @apply px-4 py-2 text-sm rounded-lg transition-all duration-200 font-medium;
+    @apply px-4 py-2 text-sm rounded-lg transition-all duration-200 font-medium flex items-center justify-center;
     background: linear-gradient(135deg, var(--color-button-bg) 0%, var(--color-accent) 100%);
     color: var(--color-button-text);
     box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
@@ -219,7 +228,7 @@
   }
 
   .upload-area {
-    @apply border-2 border-dashed rounded-xl p-6 sm:p-8 md:p-12 text-center cursor-pointer transition-all duration-300;
+    @apply border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-300;
     border-color: var(--color-border-medium);
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
