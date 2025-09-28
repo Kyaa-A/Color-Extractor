@@ -1,7 +1,11 @@
 
-# 🎨 Color Extractor
+# 🎨 TINTA
+
+**TINTA** — Tools for Inspiring New Tones & Art
 
 A professional-grade color extraction tool built with React and Vite. Extract accurate color palettes from any image using multiple advanced algorithms.
+
+*TINTA* is the Filipino word for "ink" — the essential medium that brings art to life. Just as ink transforms blank paper into meaningful art, TINTA transforms your images into beautiful, usable color palettes.
 
 ![Screenshot 2025-01-03 160332](https://github.com/user-attachments/assets/404d58b5-38e8-4cba-b21e-c8b314083bc8)
 
@@ -89,3 +93,7 @@ Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 ---
 
 **Built with ❤️ for designers, developers, and color enthusiasts**
+
+---
+
+*TINTA* — Where every image becomes a palette of possibilities.
