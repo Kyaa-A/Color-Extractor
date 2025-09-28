@@ -9,6 +9,8 @@ A professional-grade color extraction tool built with React and Vite. Extract ac
 
 ![Screenshot 2025-01-03 160332](https://github.com/user-attachments/assets/404d58b5-38e8-4cba-b21e-c8b314083bc8)
 
+🌐 **[Live Demo](https://tinta-extractor.vercel.app/)** — Try TINTA online now!
+
 ## ✨ Features
 
 ### 🚀 **7 Advanced Algorithms**
